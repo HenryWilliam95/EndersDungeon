@@ -8,14 +8,32 @@
         // Encounters
         public static void FirstEncounter()
         {
-            Console.WriteLine("You throw open the door, and grab a rusty metal sword, while charging toward your captor.");
-            Console.WriteLine("He turns...");
+            Console.WriteLine("\nYou throw open the door, and grab a rusty metal sword, while charging toward your captor.");
+            Console.WriteLine("He turns...\n");
             Console.ReadKey();
 
             Combat(false, "Human Rogue", 1, 4);
         }
 
+        public static void BasicFightEncounter()
+        {
+            Console.Clear();
+            Console.WriteLine("You turn the corner and there you see a hulking beast...");
+            Console.ReadKey();
+            Combat(true, "", 0, 0);
+        }
+
         // Encounter tools
+        public static void RandomEncounter()
+        {
+            switch (rand.Next(0, 1))
+            {
+                case 0:
+                    BasicFightEncounter();
+                    break;
+            }
+        }
+
         public static void Combat(bool random, string name, int power, int health)
         {
             string n = "";
@@ -24,7 +42,9 @@
 
             if (random)
             {
-
+                n = GetName();
+                p = rand.Next(1, 5);
+                h = rand.Next(1, 8);
             }
             else
             {
@@ -33,9 +53,9 @@
                 h = health;
             }
 
-            while (health > 0) 
+            while (h > 0) 
             {
-                Console.WriteLine(n);
+                Console.WriteLine("\n", n);
                 Console.WriteLine("Power: {0} / Health: {1}", p, h);
                 Console.WriteLine("=====================");
                 Console.WriteLine("| (A)ttack (D)efend |");
@@ -43,7 +63,13 @@
                 Console.WriteLine("=====================");
                 Console.WriteLine(" Potions: {0}  Health: {1}", Program.currentPlayer.potions, Program.currentPlayer.health);
                 
-                string input = Console.ReadLine();
+                string input = "";
+                while (string.IsNullOrEmpty(input))
+                {
+                    Console.WriteLine("Please Enter a Command:");
+                    input = Console.ReadLine();
+                }
+
                 if (input.ToLower() == "a" || input.ToLower() == "attack")
                 {
                     // Attack
@@ -124,9 +150,39 @@
                     }
                     Console.ReadKey();
                 }
-
+                if(Program.currentPlayer.health <= 0)
+                {
+                    Console.WriteLine("As the {0} strikes at {1} they deal a decisive blow and strike you down.", n, Program.currentPlayer.Name);
+                    Console.WriteLine("=====================");
+                    Console.WriteLine("|      GAME OVER    |");
+                    Console.WriteLine("=====================");
+                    Console.ReadKey();
+                    Environment.Exit(0);
+                }
                 Console.ReadKey();
             }
+
+            var c = rand.Next(10, 50);
+            Console.WriteLine("As you stand victorious over {0} it's body disolves into {1} gold coins!", n, c);
+            Program.currentPlayer.coins += c;
+            Console.ReadKey();
+        }
+
+        public static string GetName()
+        {
+            switch(rand.Next(0, 4))
+            {
+                case 0:
+                    return "Skeleton";
+                case 1:
+                    return "Zombie";
+                case 2:
+                    return "Human Cultist";
+                case 3:
+                    return "Grave Robber";
+            }
+
+            return "Human Rogue";
         }
     }
 }
